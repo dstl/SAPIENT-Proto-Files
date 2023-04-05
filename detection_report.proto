@@ -1,0 +1,97 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+
+import "google/protobuf/timestamp.proto";
+
+import "sapient_msg/associated_file.proto";
+import "sapient_msg/associated_detection.proto";
+import "sapient_msg/location.proto";
+import "sapient_msg/range_bearing.proto";
+import "sapient_msg/velocity.proto";
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg";
+option java_outer_classname = "DetectionReportProto";
+// [END java_declaration]
+
+
+// [START messages]
+message DetectionReport {
+    string report_id = 1; // ULID for the message
+    string object_id = 2; // ULID for the object detected in the environment
+    optional string task_id = 3; // ULID of the task the ASM is currently performing
+    optional string state = 4; // Whether a special case is in effect (e.g. object lost)
+    oneof location_oneof {
+        RangeBearing range_bearing = 5; // Location of object being detected using an range-bearing coordinate system
+        Location location = 6; // Location of object being detected using an 'x-y-z' coordinate system
+    }
+    optional float detection_confidence = 7; // The confidence that the detection is present as a percentage (0-1)
+    repeated TrackObjectInfo track_info = 8; // Additional information about the track as defined in the ASM's registration message
+    optional PredictedLocation prediction_location = 9; // Location where the object is predicted to be at a future time
+    repeated TrackObjectInfo object_info = 10; // Additional information about the detected object as defined in the ASM's registration message
+    repeated DetectionReportClassification classification = 11; // Classification information about the detected object
+    repeated Behaviour behaviour = 12; // Behavioural information about the detected object
+    repeated AssociatedFile associated_file = 13; // URLs to any additional files relating to the object which hosted on the network
+    repeated Signal signal = 14; // RF signal information about the detected object
+    repeated AssociatedDetection associated_detection = 15; // Other SAPIENT detections associated with this detection
+    repeated DerivedDetection derived_detection = 16; // Other SAPIENT detections dervied from this detection
+    oneof velocity_oneof {
+        RYPVelocity ryp_velocity = 17; // Velocity of object relative to sensor location and sensor pointing direction  
+        GHCVelocity ghc_velocity = 18; // Velocity of object in global coordinates in the style of Air Traffic Management
+		ENUVelocity enu_velocity = 19; // Velocity of object as a vector in global cartesian coordinates
+		SHPVelocity shp_velocity = 20; // Velocity of object as a vector in global spherical coordinates 
+		RAEVelocity rae_velocity = 21; // Velocity of object relative to sensor location and ground plane 
+    }
+    optional string colour = 22; // Colour of the object being reported
+    optional string id = 23; // ID of the object being reported (e.g. the tail number of aircraft)
+
+    message PredictedLocation {
+        oneof predicted_location_oneof {
+            RangeBearing range_bearing = 1; // Predicted location of object being detected using an range-bearing coordinate system
+            Location location = 2; // Predicted location of object being detected using an 'x-y-z' coordinate system
+        }
+        optional google.protobuf.Timestamp predicted_timestamp = 3; // The timestamp of when the detected object will be at the predicted location
+    }
+    
+    message TrackObjectInfo {
+        string type = 1; // The type of object_info being reported (e.g. colour)
+        string value = 2; // The value of the object_info being reported (e.g. red)
+        optional float error = 3; // Any error associated with the object_info
+    }
+
+    message DetectionReportClassification {
+        string type = 1; // Classification of the detected object being reported
+        optional float confidence = 2; // Confidence (0-1) that this is the correct classification of the detected object
+        repeated SubClass sub_class = 3; // Any sub-classifications of the detected object
+    }
+
+    message SubClass {
+        string type = 1; // Classification of the detected object being reported
+        optional float confidence = 2; // Confidence (0-1) that this is the correct classification of the detected object
+        int32 level = 3; // The level of sub-classification (top level is 0, the first sub-class is 1, etc.)
+        repeated SubClass sub_class = 4; // Any sub-classifications of the detected object
+    }
+
+    message Behaviour {
+        string type = 1; // Behviouar of the detected object being reported
+        optional float confidence = 2; // Confidence (0-1) that this is the correct behvaiour of the detected object
+    }
+
+    message Signal {
+        float amplitude = 1; // Peak amplitude of the signal being reported
+        optional float start_frequency = 2; // Lowest frequency of the band being reported
+        float centre_frequency = 3; // Centre frequency of the band being reported
+        optional float stop_frequency = 4; // Highest frequency of the band being reported
+        optional float pulse_duration = 5; // Pulse duration of the signal being reported
+    }
+
+    message DerivedDetection {
+        optional google.protobuf.Timestamp timestamp = 1; // UTC timestamp the message was sent
+        string node_id = 2; // ULID for the node where the assoicated detection has originiated
+        string object_id = 3; // ULID for the object detected in the environment
+    }
+}
+// [END messages]

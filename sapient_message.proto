@@ -1,0 +1,50 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+
+import "google/protobuf/timestamp.proto";
+
+import "sapient_msg/alert.proto";
+import "sapient_msg/alert_ack.proto";
+import "sapient_msg/detection_report.proto";
+import "sapient_msg/error.proto";
+import "sapient_msg/proto_options.proto";
+import "sapient_msg/registration.proto";
+import "sapient_msg/registration_ack.proto";
+import "sapient_msg/status_report.proto";
+import "sapient_msg/task.proto";
+import "sapient_msg/task_ack.proto";
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg";
+option java_outer_classname = "SapientMessageProto";
+// [END java_declaration]
+
+
+// [START options]
+option (file_options) = {
+  standard_version: "ICD7.0"
+};
+// [END options]
+
+
+// [START messages]
+message SapientMessage {
+    google.protobuf.Timestamp timestamp = 1; // UTC timestamp the message was sent
+    string node_id = 2; // UUID for the node which is sending the message
+    optional string destination_id = 3; // UUID for the node being tasked
+    oneof content {
+        Registration registration = 4; // SAPIENT Registration message
+        RegistrationAck registration_ack = 5; // SAPIENT Registration Acknowledgement message
+        StatusReport status_report = 6; // SAPIENT Status Report message
+        DetectionReport detection_report = 7; // SAPIENT Detection Report message
+        Task task = 8; // SAPIENT Task message
+        TaskAck task_ack = 9; // SAPIENT Task Acknowledgement message
+        Alert alert = 10; // SAPIENT Alert message
+        AlertAck alert_ack = 11; // SAPIENT Alert Acknowledgment message
+        Error error = 12; // SAPIENT Error message
+    }
+}
+// [END messages]

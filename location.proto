@@ -1,0 +1,42 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg";
+option java_outer_classname = "LocationProto";
+// [END java_declaration]
+
+// [START messages]
+message LocationList {
+    repeated Location locations = 1; // List of locations used to define a region
+}
+
+message Location {
+    double x = 1; // X-coordinate (normally longitude)
+    double y = 2; // Y-coordinate (normally latitude)
+    optional double z = 3; // Z-coordinate (normally altitude)
+    optional double x_error = 4; // X-coordinate error
+    optional double y_error = 5; // Y-coordinate error
+    optional double z_error = 6; // Z-coordinate error
+    LocationCoordinateSystem coordinate_system = 7; // Coordinate system used
+    LocationDatum datum = 8; // Datum used
+}
+
+enum LocationCoordinateSystem {
+    LOCATION_COORDINATE_SYSTEM_UNSPECIFIED = 0; // Co-ordinate system/units not defined
+    LOCATION_COORDINATE_SYSTEM_LAT_LNG_DEG_M = 1; // Latitude/Longitude in decimal-degrees/metres
+    LOCATION_COORDINATE_SYSTEM_LAT_LNG_RAD_M = 2; // Latitude/Longitude in radians/metres
+    LOCATION_COORDINATE_SYSTEM_LAT_LNG_DEG_F = 3; // Latitude/Longitude in decimal-degrees/feet
+    LOCATION_COORDINATE_SYSTEM_LAT_LNG_RAD_F = 4; // Latitude/Longitude in radians/feet
+    LOCATION_COORDINATE_SYSTEM_UTM_M = 5; // UTM with altitude in metres
+}
+
+enum LocationDatum {
+    LOCATION_DATUM_UNSPECIFIED = 0; // Datum not defined
+    LOCATION_DATUM_WGS84_E = 1; // WGS84 Ellipsoid
+    LOCATION_DATUM_WGS84_G = 2; // WGS84 Geoid
+}
+// [END messages]

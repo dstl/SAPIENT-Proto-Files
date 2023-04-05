@@ -1,0 +1,22 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+
+import "google/protobuf/descriptor.proto";
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg";
+option java_outer_classname = "ProtoOptionsProto";
+// [END java_declaration]
+
+// [START messages]
+message FileOptions {
+    string standard_version = 1;
+}
+
+extend google.protobuf.FileOptions {
+    FileOptions file_options = 100001;
+}
+// [END messages]

@@ -1,0 +1,72 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+
+import "sapient_msg/location.proto";
+import "sapient_msg/range_bearing.proto";
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg";
+option java_outer_classname = "StatusReportProto";
+// [END java_declaration]
+
+
+// [START messages]
+message StatusReport {
+    string report_id = 1; // ULID for the message
+    System system = 2; // Current ASM status
+    Info info = 3; // State of the information in this message
+    optional string active_task_id = 4; // ULID of the task the ASM is currently performing
+    optional string mode = 5; // The current mode of the ASM
+    optional Power power = 6; // The power supply of the ASM
+    optional Location sensor_location = 7; // Current ASM location
+    optional LocationOrRangeBearing field_of_view = 8; // Area currently visible to ASM
+    optional LocationOrRangeBearing coverage = 9; // Area that the ASM can cover
+    repeated LocationOrRangeBearing obscuration = 10; // Area that the ASM cannot cover
+    repeated Status status = 11; // Information about the ASM or the envionrment
+  
+    enum System {
+        SYSTEM_UNSPECIFIED = 0; // The system state is unset
+        SYSTEM_OK = 1; // The system is operating normally
+        SYSTEM_WARNING = 2; // There is a potential issue with the system
+        SYSTEM_ERROR = 3; // There is an issue with the system
+        SYSTEM_TAMPER = 4; // The system has been tampered with
+        SYSTEM_GOODBYE = 5; // The system is about to disconnect
+    }
+
+    message Power {
+        optional string source = 1; // Power source (e.g. battery/mains)
+        optional string status = 2; // Power supply status
+        optional int32 level = 3; // Battery level 0-100
+    }
+
+    message LocationOrRangeBearing {
+        oneof fov_oneof {
+            RangeBearingCone range_bearing = 1; // Location in Sphereical coordinates
+            LocationList location_list = 2; // Location in Geo coordinates 
+        }
+    }
+
+    enum Info {
+        INFO_UNSPECIFIED = 0; // Unset enum
+        INFO_NEW = 1; // New information about the system is being presented
+        INFO_UNCHANGED = 2; // The existing information about the system is up-to-date
+    }
+
+    message Status {
+        optional StatusLevel status_level = 1; // Information level being reported
+        string status_type = 2; // Type of the information being reported (e.g. Weather)
+        optional string status_value = 3; // Vaule of the information being reported (e.g. Raining)
+    }
+
+    enum StatusLevel {
+        STATUS_LEVEL_UNSPECIFIED = 0; // No status level has been set
+        STATUS_LEVEL_SENSOR_STATUS = 1; // Information about the current node state
+        STATUS_LEVEL_INFORMATION_STATUS = 2; // Information about the environment that might affect this or other nodes
+        STATUS_LEVEL_WARNING_STATUS = 3; // Information about performance degregation of the node
+        STATUS_LEVEL_ERROR_STATUS = 4; // Information about severely affecting this node's capabilities
+    }
+}
+// [END messages]

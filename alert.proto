@@ -1,0 +1,62 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+
+import "sapient_msg/associated_detection.proto";
+import "sapient_msg/associated_file.proto";
+import "sapient_msg/location.proto";
+import "sapient_msg/range_bearing.proto";
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg";
+option java_outer_classname = "AlertProto";
+// [END java_declaration]
+
+
+// [START messages]
+message Alert {
+    string alert_id = 1; // ULID for the message
+    optional AlertType alert_type = 2; // Type of alert message
+    optional AlertStatus status = 3; // State of the information in this message
+    optional string description = 4; // Description of the alert (normally displayed on a GUI)
+    oneof location_oneof { // The position of the event/object that caused the alert
+        RangeBearing range_bearing = 5; // Location of the alert in Sphereical coordinates
+        Location location = 6; // Location of the alert in Geo coordinates
+    }
+    optional string region_id = 7; // ULID of the region the alert is from
+    optional DiscretePriority priority = 8; // Priority of the alert
+    optional float ranking = 9; // 0-1
+    optional float confidence = 10; // Confidence (0-1) that the alert is not a false-alarm
+    repeated AssociatedFile associated_file = 11; // URL linking to any files associated with the alert
+    repeated AssociatedDetection associated_detection = 12; // Detections associated with the alert
+    optional string additional_information = 13; // Any additional information that may be useful for the alert consumer
+
+    enum AlertType {
+        ALERT_TYPE_UNSPECIFIED = 0; // Unset enum
+        ALERT_TYPE_INFORMATION = 1;
+        ALERT_TYPE_WARNING = 2;
+        ALERT_TYPE_CRITICAL = 3;
+        ALERT_TYPE_ERROR = 4;
+        ALERT_TYPE_FATAL = 5;
+        ALERT_TYPE_MODE_CHANGE = 6; 
+    }
+
+    enum AlertStatus {
+        ALERT_STATUS_UNSPECIFIED = 0; // Unset enum
+        ALERT_STATUS_ACTIVE = 1;
+        ALERT_STATUS_ACKNOWLEDGE = 2;
+        ALERT_STATUS_REJECT = 3;
+        ALERT_STATUS_IGNORE = 4;
+        ALERT_STATUS_CLEAR = 5;
+    }
+
+    enum DiscretePriority {
+        DISCRETE_PRIORITY_UNSPECIFIED = 0; // Alert priority not set
+        DISCRETE_PRIORITY_LOW = 1; // Low alert priority
+        DISCRETE_PRIORITY_MEDIUM = 2; // Medium alert priority
+        DISCRETE_PRIORITY_HIGH = 3; // High alert priority
+    }
+}
+// [END messages]

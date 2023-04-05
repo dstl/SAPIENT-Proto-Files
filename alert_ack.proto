@@ -1,0 +1,26 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg";
+option java_outer_classname = "AlertAckProto";
+// [END java_declaration]
+
+
+// [START messages]
+message AlertAck {
+    string alert_id = 1; // ULID for the message
+    optional AlertStatus alert_status = 2; // State of the information in this message
+    optional string reason = 3; // Reason why alert was not accepted
+  
+    enum AlertStatus {
+        ALERT_STATUS_UNSPECIFIED = 0; // Reason not set
+        ALERT_STATUS_ACCEPTED = 1; // Alert accepted
+        ALERT_STATUS_REJECTED = 2; // Alert rejected
+        ALERT_STATUS_CANCELLED = 3; // Alert cancelled
+    }
+}
+// [END messages]

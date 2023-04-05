@@ -1,0 +1,122 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "com.sapient.common.protos";
+option java_outer_classname = "SAPIENTCommon";
+// [END java_declaration]
+
+// [START messages]
+
+// Provide velocity in global coordinates in the style of Air Traffic Management
+message GHCVelocity {
+    optional double ground_speed = 1; // Speed over the ground
+    optional double heading = 2; // Azimuth angle of velocity vector
+    optional double climb_rate = 3; // Rate of change of altitude
+    optional double ground_speed_error = 4; // Error in the speed over the ground
+    optional double heading_error = 5; // Error in the azimuth angle of velocity vector
+    optional double climb_rate_error = 6; // Error in the rate of change of altitude	
+}
+
+// Provide velocity as a vector in global cartesian coordinates
+// This is a revision of the TIE22 LocationVelocity encoding velocity as per the Location field but with eastings, northings and up for clarity.
+// This aligns with the Location (Cartesian) coordinates system. 
+message ENUVelocity {
+    double east_rate = 1; // Velocity in the east-axis (x)
+    double north_rate = 2; // Velocity in the north-axis (y)
+    optional double up_rate = 3; // Velocity in the up-axis (z)
+    optional double east_rate_error = 4;  // Error in the velocity in the east-axis
+    optional double north_rate_error = 5; // Error in the velocity in the north-axis
+    optional double up_rate_error = 6;    // Error in the velocity in the up-axis
+}
+
+// Provide velocity relative to sensor location and sensor pointing direction  
+message RYPVelocity {
+    optional double range_rate = 1; // Rate of change in range 
+    optional double yaw_rate = 2; // Rate of change in yaw
+    optional double pitch_rate = 3; // Rate of change in pitch
+    optional double range_rate_error = 4; // Error in the rate of change in range
+    optional double yaw_rate_error = 5; // Error in the rate of change in yaw
+    optional double pitch_rate_error = 6; // Error in the rate of change in pitch
+}
+
+// Provide velocity relative to sensor location and ground plane 
+message RAEVelocity {
+    optional double range_rate = 1; // Rate of change in range 
+    optional double azimuth_rate = 2; // Rate of change in azimuth
+    optional double elevation_rate = 3; // Rate of change in elevation
+    optional double range_rate_error = 4; // Error in the rate of change in range
+    optional double azimuth_rate_error = 5; // Error in the rate of change in azimuth
+    optional double elevation_rate_error = 6; // Error in the rate of change in elevation
+}
+
+// Provide velocity as a vector in global spherical coordinates 
+message SHPVelocity {
+    optional double speed = 1; // Scalar magnitude of velocity vector
+    optional double heading = 2; // Azimuth angle of velocity vector
+    optional double pitch = 3; // Pitch (elevation) angle of velocity vector
+    optional double speed_error = 4; // Error in the scalar magnitude of velocity vector
+    optional double heading_error = 5; // Error in the azimuth angle of velocity vector
+    optional double pitch_error = 6; // Error in the pitch/elevation angle of velocity vector
+}
+
+// Specify units when GHCVelocity is in use
+message GHCVelocityUnits {
+	optional SpeedUnits ground_speed_units = 1; // Units that ground speed is reported in
+	optional AngularUnits angular_units = 2; // Units that heading are reported in 
+	optional SpeedUnits climb_rate_units = 3; // Units that climb rate is reported in 
+}
+
+// Specify units when ENUVelocity is in use
+message ENUVelocityUnits {
+    SpeedUnits east_north_rate_units = 1; // Units that velocity is reported in for east and north axis
+    optional SpeedUnits up_rate_units = 2; // Units that velocity is reported in for up axis
+}
+
+// Specify units when RYPVelocity is in use
+message RYPVelocityUnits {
+    optional AngularVelocityUnits angular_units = 1; // Units that yaw and pitch rates are reported in
+	optional SpeedUnits range_rate_units = 2; // Units that range rate is reported in 
+}
+
+// Specify units when RAEVelocity is in use
+message RAEVelocityUnits {
+    optional AngularVelocityUnits angular_units = 1; // Units that azimuth and elevation rates are reported in
+	optional SpeedUnits range_rate_units = 2; // Units that range rate is reported in 
+}
+
+// Specify units when SHPVelocity is in use
+message SHPVelocityUnits {
+    optional AngularUnits angular_units = 1; // Units that heading and pitch angles are reported in
+	optional SpeedUnits speed_units = 2; // Units that speed is reported in
+}
+
+// This specifies the units of the scalar speed component of velocity being reported 
+enum SpeedUnits {
+    SPEED_UNITS_UNSPECIFIED = 0; // Units not defined
+    SPEED_UNITS_MS = 1; // Meters per second
+    SPEED_UNITS_KPH = 2; // Kilometers per hour
+    SPEED_UNITS_MPH = 3; // Miles per hour
+    SPEED_UNITS_FS = 4; // Feet per second	
+}
+
+// This specifies the units for angles
+enum AngularUnits {
+    ANGULAR_UNITS_UNSPECIFIED = 0; // Units not defined
+    ANGULAR_UNITS_RADIANS = 1; // Angles in radians
+    ANGULAR_UNITS_DEGREES = 2; // Angles in degrees
+}
+
+// This specifies the units for rates of changes of angles
+enum AngularVelocityUnits {
+    ANGULAR_VELOCITY_UNITS_UNSPECIFIED = 0; // Units not defined
+    ANGULAR_VELOCITY_UNITS_RS = 1; // Radians per second
+    ANGULAR_VELOCITY_UNITS_DS = 2; // Degrees per second
+}
+
+
+  // [END messages]

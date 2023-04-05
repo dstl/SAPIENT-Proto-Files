@@ -1,0 +1,315 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+
+import "sapient_msg/location.proto";
+import "sapient_msg/range_bearing.proto";
+import "sapient_msg/velocity.proto";
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg";
+option java_outer_classname = "RegistrationProto";
+// [END java_declaration]
+
+// [START messages]
+message Registration {
+    repeated NodeDefinition node_definition = 1; // Type of the node
+    string icd_version = 2; // ICD version implemented by the node
+    optional string name = 3; // System name
+    optional string short_name = 4; // Shortened version of the system name suitable for GUIs
+    repeated Capability capabilities = 5; // Node's capabilities
+    StatusDefinition status_definition = 6; // Status report definition
+    repeated ModeDefinition mode_definition = 7; // Detection report and tasking definitons
+
+    message NodeDefinition {
+        NodeType node_type = 1; // Description of major type of the node
+		repeated string node_sub_type  = 2; // further description of node type
+    }
+
+    enum NodeType {
+        NODE_TYPE_UNSPECIFIED = 0; // No node type specified
+        NODE_TYPE_OTHER = 1; // A node type not defined in another enumeration
+        NODE_TYPE_RADAR = 2; // A radar-based system (such as an air traffic control radar)
+        NODE_TYPE_LIDAR = 3; // A sensor that uses light to determine the range to objects in a scene
+        NODE_TYPE_CAMERA = 4; // An camera-based system (such as an electro-optical or infra-red camera)
+        NODE_TYPE_SEISMIC = 5; // A system based on the detection of vibrations in the local environment (such as a seismometer)
+        NODE_TYPE_ACOUSTIC = 6; // A system based on acoustic signals (such as a microphone or speaker)
+        NODE_TYPE_PROXIMITY_SENSOR = 7; // A system which can detect the local present of objects (such as a trip-wire)
+        NODE_TYPE_PASSIVE_RF = 8; // A system based on the passive interception of radio-frequency signals
+        NODE_TYPE_HUMAN = 9; // A human acting as part of a SAPIENT system (such as a spotter or guard)
+        NODE_TYPE_CHEMICAL = 10; // A system that can detect chemical signatures
+        NODE_TYPE_BIOLOGICAL = 11; // A system that can detect biological signatures
+        NODE_TYPE_RADIATION = 12; // A system that can detect radioactive signatures (such as a Geiger counter)
+        NODE_TYPE_KINETIC = 13; // A system which has a physical effector (such as a missile or collision-based system)
+        NODE_TYPE_JAMMER = 14; // A radio-frequency transmitter that disrupts other systems using power
+        NODE_TYPE_CYBER = 15; // A system which uses network/communication protocols to detect or effect other systems
+    }
+
+    message Capability {
+        string category = 1; // The category of field to report (e.g. Radar, Jammer, etc.)
+        string type = 2; // Description of the capability (e.g. Maximum Transmit Power)
+        optional string value = 3; // The value of the capability (e.g. 50)
+        optional string units = 4; // The units of the value that will be reported (e.g. dB)
+    }
+
+    message StatusDefinition {
+        Duration status_interval = 1; // Time between heartbeats
+        optional LocationType location_definition = 2; // Node location definition
+        optional LocationType coverage_definition = 3; // Area covered by the ASM definition
+        optional LocationType obscuration_definition = 4; // Area obsucred to ASM definition
+        repeated StatusReport status_report = 5; // Additional heartbeat report definitions
+        optional LocationType field_of_view_definition = 6; // ASM's field of view definition
+    }
+
+    enum TimeUnits {
+        TIME_UNITS_UNSPECIFIED = 0; // Time units not specified
+        TIME_UNITS_NANOSECONDS = 1; // Nano Seconds
+        TIME_UNITS_MICROSECONDS = 2; // Micro Seconds
+        TIME_UNITS_MILLISECONDS = 3; // Milli Seconds
+        TIME_UNITS_SECONDS = 4; // Seconds
+        TIME_UNITS_MINUTES = 5; // Minutes
+        TIME_UNITS_HOURS = 6; // Hours
+        TIME_UNITS_DAYS = 7; // Days
+    }
+
+    message Duration {
+        TimeUnits units = 1; // Units that the duration are specified in
+        int32 value = 2; // Amount of time being specified for the duration
+    }
+
+    message ModeParameter {
+        string type = 1; // Type of parameter (e.g. SelfAdaptation)
+        string value = 2; // Allowed values of parameter (e.g. ROI, Range)
+    }
+
+    message LocationType {
+        oneof coordinates_oneof {
+            LocationCoordinateSystem location_units = 1; // Units of location
+            RangeBearingCoordinateSystem range_bearing_units = 2; // Units of range bearing
+        };
+        oneof datum_oneof {
+            LocationDatum location_datum = 3; // Datum of location
+            RangeBearingDatum range_bearing_datum = 4; // Datum of range bearing
+        };
+        optional string zone = 5; // If using UTM coordinates, provide the UTM zone in this field (e.g. 30N)
+    }
+
+	// Specify how velocity is provided by specifying the coordinates system type and units in use
+    message VelocityType {
+        oneof velocity_units_oneof {
+            GHCVelocityUnits ghc_velocity_units = 1; // Provide velocity in global coordinates in the style of Air Traffic Management and specify units
+            
+			RYPVelocityUnits ryp_units = 2; // Provide velocity relative to sensor location and sensor pointing direction and specify units
+
+			RAEVelocityUnits rae_units = 3; // Provide velocity relative to sensor location and ground plane
+			
+			ENUVelocityUnits enu_velocity_units = 4; // Provide velocity as a vector in global spherical coordinates and specify units	
+			
+			SHPVelocityUnits shp_velocity_units = 5; // Provide velocity as a vector in global spherical coordinates 
+
+        };
+        oneof datum_oneof {
+            LocationDatum location_datum = 6; // Datum of velocity in Cartesian coordinates
+            RangeBearingDatum range_bearing_datum = 7; // Datum of velocity in Spherical coordinates
+        };
+        optional string zone = 8; // If using UTM coordinates, provide the UTM zone in this field (e.g. 30N)
+    }
+
+    message StatusReport {
+        StatusReportCategory category = 1; // Category of the field to report in the status report (e.g. sensor, power, mode, status, etc.)
+        string type = 2; // Type or name of the information being provide
+        optional string units = 3; // Units or valid values that will be reported
+        optional bool on_change = 4; // Is a new status report sent when a value changes
+    }
+
+    enum StatusReportCategory {
+        STATUS_REPORT_CATEGORY_UNSPECIFIED = 0;
+        STATUS_REPORT_CATEGORY_SENSOR = 1; // Sensor fields which can be reported
+        STATUS_REPORT_CATEGORY_POWER = 2; // Power fields which can be reported
+        STATUS_REPORT_CATEGORY_MODE = 3; // Modes which the can be reported in the status report message
+        STATUS_REPORT_CATEGORY_STATUS = 4; // Status fields which can be reported
+    }
+
+    message ModeDefinition {
+        string mode_name = 1; // Mode's name
+        ModeType mode_type = 2; // Mode's type
+        optional string mode_description = 3; // Description of the mode (normally used by GUIs)
+        Duration settle_time = 4; // Time required for the ASM to change to this mode
+        optional Duration maximum_latency = 5; // Maximum expected latency from a detection being made by the sensor to a message being sent
+        optional ScanType scan_type = 6; // Type of scan. Typically: fixed or scanning
+        optional TrackingType tracking_type = 7; // Type of scan
+        optional Duration duration = 8; // Time the mode lasts for in the case of temporary modes
+        repeated ModeParameter mode_parameter = 9; // Additional parameters that can be passed to the mode during tasking
+        DetectionDefinition detection_definition = 10; // Definition of detection reports sent while in this mode
+        repeated TaskDefinition task = 11; // Definition of tasks that can be accepted by the ASM while in this mode
+    }
+
+    enum ModeType {
+        MODE_TYPE_UNSPECIFIED = 0; // Mode type not specified
+        MODE_TYPE_PERMANENT = 1; // Mode is continous and will not change until the node is re-tasked
+        MODE_TYPE_TEMPORARY = 2; // Mode is temporary and will revert to another node once the mode's duration is reached
+    }
+
+    enum ScanType {
+        SCAN_TYPE_UNSPECIFIED = 0; // Scan type not specified
+        SCAN_TYPE_FIXED = 1; // Mode has a fixed field of view that does not change and all regions are detected at all times (e.g. a fixed camera)
+        SCAN_TYPE_SCANNING = 2; // Mode has a moving field of view that will only detect part of a region at any given time (e.g. a rotating radar)
+        SCAN_TYPE_STEERABLE = 3; // Mode has a field of view that can be moved (e.g. a pan-tilt-zoom camera)
+    }
+
+    enum TrackingType {
+        TRACKING_TYPE_UNSPECIFIED = 0; // Tracking type is not defined
+	TRACKING_TYPE_NONE = 1; // No data assocation between detections of the same object. A unique object_id is generated for each detection
+        TRACKING_TYPE_TRACKLET = 2; // ASM will attempt to persist an object_id between detections of the same object, but will not attempt to join broken tracks
+        TRACKING_TYPE_TRACK = 3; // ASM is able to persist an object_id between detections of the same object, even when tracks are broken
+        TRACKING_TYPE_TRACK_WITH_RE_ID = 4; // ASM is able to provide tracks that cna be re-associated based on features
+    }
+
+    message DetectionDefinition {
+        LocationType location_type = 1; // Type of location that is reported in the detection report
+        repeated PerformanceValue detection_performance = 2; // detection performance definition
+        repeated DetectionReport detection_report = 3; // Detection report defintion
+        repeated DetectionClassDefinition detection_class_definition = 4; // Classes able to be reported in this detection report
+        repeated BehaviourDefinition behaviour_definition = 5; // Behaviours able to be reported in the detection report
+        optional VelocityType velocity_type = 6; // Type of velocity that is reported in the detection report
+        optional GeometricError geometric_error = 7; // List of location error charaterisations to allow the DMM to understand the detection performance of the ASM
+    }
+
+    message GeometricError {
+        string type = 1; // Type of the performance value being specified (e.g. Standard Deviation)
+        string units = 2; // Units of the performance value being specified (e.g. metres)
+        string variation_type = 3; // How the performance value being specified may vary during operation (e.g. Linear with Range)
+        repeated PerformanceValue performance_value = 4; // A list of types and values
+    }
+
+    message PerformanceValue {
+        string type = 1; // Type of the performance value being specified (e.g. Rotation speed)
+        string units = 2; // Units of the performance value being specified (e.g. Degrees per second)
+        string unit_value = 3; // Typical unit value of the performance value being specified (e.g. 2.5)
+        optional string variation_type = 4; // How the performance value being specified may vary during operation (e.g. Linear)
+    }
+
+    message DetectionReport {
+        DetectionReportCategory category = 1; // Category of detection field being reported (e.g. object_info)
+        string type = 2; // Type of detection field being reported (e.g. colour)
+        string units = 3; // Units of detection field being reported (e.f. "Red, Green, Blue, Yellow...")
+        optional bool on_change = 4; // Is a new detection report sent when a value changes
+    }
+
+    enum DetectionReportCategory {
+        DETECTION_REPORT_CATEGORY_UNSPECIFIED = 0; // Detection report category not specified
+        DETECTION_REPORT_CATEGORY_DETECTION = 1; // Detection fields
+        DETECTION_REPORT_CATEGORY_TRACK = 2; // Track Info fields
+        DETECTION_REPORT_CATEGORY_OBJECT = 3; // Object Info fields
+    }
+
+    message DetectionClassDefinition {
+        optional ConfidenceDefinition confidence_definition = 1; // A flag to note what type of confidences the ASM will provide for classifications
+        repeated PerformanceValue class_performance = 2; // Performance values associated with the classifications in the detection 
+        repeated ClassDefinition class_definition = 3; // Classifications the ASM is able to provide
+    }
+
+    enum ConfidenceDefinition {
+        CONFIDENCE_DEFINITION_UNSPECIFIED = 0; // Confidence definition not specified
+        CONFIDENCE_DEFINITION_SINGLE_CLASS = 1; // ASM will only provide confidence for the most likely class
+        CONFIDENCE_DEFINITION_MULTI_CLASS = 2; // ASM will provide confidence for all classes
+    }
+
+    message ClassDefinition {
+        string type = 1; // Name of the classification that can be reported
+        optional string units = 2; // The units of any reported confidence that the classification is correct (e.g. represented as a decimal (0-1))
+        repeated SubClass sub_class = 3; // Any classes further down the taxonomy tree that can be reported
+    }
+
+    message SubClass {
+        string type = 1; // Name of the classification that can be reported
+        optional string units = 2; // The units of any reported confidence that the classification is correct (e.g. represented as a decimal (0-1))
+        int32 level = 3; // The level of the sub-class. The top-level class would have a sub-level of: 0, the next: 1, etc.
+        repeated SubClass sub_class = 4; // Any classes further down the taxonomy tree that can be reported
+    }
+
+    message BehaviourDefinition {
+        string type = 1; // Name of the behaviour that can be reported
+        optional string units = 2; // The units of any reported confidence that the behaviour is correct (e.g. represented as a decimal (0-1))
+    }
+
+    message TaskDefinition {
+        optional int32 concurrent_tasks = 1; // The number of instances of this task that can be run at the same time
+        RegionDefinition region_definition = 2; // Region definition for regions this task can operate on
+        repeated Command command = 3; // Commands that can be issued as part of this task
+        string type = 4; // Type of task
+    }
+
+    message ClassFilterDefinition {
+        repeated FilterParameter filter_parameter = 1; // Parameter to be filtered on
+        repeated SubClassFilterDefinition sub_class_definition = 2; // List of sub-class filters
+        string type = 3; // Classification name to be filtered on
+    }
+
+    message SubClassFilterDefinition {
+        repeated FilterParameter filter_parameter = 1; // Parameter to be filtered on
+        int32 level = 2; // Level of sub-class filter
+        string type = 3; // Classification name to be filtered on
+        repeated SubClassFilterDefinition sub_class_definition = 4; // List of sub-class filters
+    }
+
+    message FilterParameter {
+        string parameter = 1; // Parameter to be filtered
+        repeated Operator operators = 2; // Operaters to filter parameter on
+    }
+
+    enum Operator {
+        OPERATOR_UNSPECIFIED = 0;
+        OPERATOR_ALL = 1;
+        OPERATOR_GREATER_THAN = 2;
+        OPERATOR_LESS_THAN = 3;
+        OPERATOR_EQUALS = 4;
+    }
+
+    message BehaviourFilterDefinition {
+        repeated FilterParameter filter_parameter = 1; // Parameter to be filtered on
+        string type = 2; // Behvaiour name to be filtered on
+    }
+
+    message Command {
+        string name = 1; // Name of command
+        string units = 2; // Units or allowable values of the command
+        Duration completion_time = 3; // Time allowed to complete command
+        CommandType type = 4; // The type of command
+    }
+
+    enum CommandType {
+        COMMAND_TYPE_UNSPECIFIED = 0; // No command type set
+        COMMAND_TYPE_REQUEST = 1; // The request being asked for
+        COMMAND_TYPE_DETECTION_THRESHOLD = 2; // The requested sensitivity of sensor during the task
+        COMMAND_TYPE_DETECTION_REPORT_RATE = 3; // The requested reporting rate of sensor during the task
+        COMMAND_TYPE_CLASSIFICATION_THRESHOLD = 4; // The requested classification sensitivity of sensor during the task
+        COMMAND_TYPE_MODE_CHANGE = 5; // Mode change for the ASM
+        COMMAND_TYPE_LOOK_AT = 6; // LookAt command for tasking pointing ASMs
+    }
+
+    enum DiscreteThreshold {
+        DISCRETE_THRESHOLD_UNSPECIFIED = 0; // Threshold not set
+        DISCRETE_THRESHOLD_LOW = 1; // Threshold set to low
+        DISCRETE_THRESHOLD_MEDIUM = 2; // Threshold set to medium
+        DISCRETE_THRESHOLD_HIGH = 3; // Threshold set to high
+    }
+
+    message RegionDefinition {
+        repeated RegionType region_type = 1; // Types of region
+        optional Duration settle_time = 2; // Time to settle to normal performance in this mode
+        repeated LocationType region_area = 3; // Location types used for the area that defines the region
+        repeated ClassFilterDefinition class_filter_definition = 4; // Filters that can be applied to the region for classes
+        repeated BehaviourFilterDefinition behaviour_filter_definition = 5; // Filters that can be applied to the region for behaviours
+    }
+
+    enum RegionType {
+        REGION_TYPE_UNSPECIFIED = 0; // No region type set
+        REGION_TYPE_AREA_OF_INTEREST = 1; // Region is of particular interest
+        REGION_TYPE_IGNORE = 2; // Region to be ignored
+        REGION_TYPE_BOUNDARY = 3; // Region defines the boundary of the area of operations
+    }
+}
+// [END messages]

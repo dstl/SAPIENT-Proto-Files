@@ -1,0 +1,113 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+
+import "google/protobuf/timestamp.proto";
+
+import "sapient_msg/location.proto";
+import "sapient_msg/range_bearing.proto";
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg";
+option java_outer_classname = "TaskProto";
+// [END java_declaration]
+
+
+// [START messages]
+message Task {
+    string task_id = 1; // ULID for the task being sent
+    optional string task_name = 2; // Name of the task being requested
+    optional string task_description = 3; // Description of the task being requested
+    optional google.protobuf.Timestamp task_start_time = 4; // Time the task is requested to start at
+    optional google.protobuf.Timestamp task_end_time = 5; // Time the task is requested to end at
+    Control control = 6; // Control action being requested
+    repeated Region region = 7; // Area tasking is to be applied (such as a system implementing geo-fencing)
+    optional Command command = 8; // Command being requested as part the task
+
+    enum Control {
+        CONTROL_UNSPECIFIED = 0; // No control set
+        CONTROL_START = 1; // Initialise/start the task
+        CONTROL_STOP = 2; // Stop the task, remove the definition and revert to the previous task
+        CONTROL_PAUSE = 3; // Stop the task, keep the definition for later use and revert to previous task
+        CONTROL_DEFAULT = 4; // Start/revert to the default task. Stop all other tasks
+    }
+
+    message Command {
+        oneof command {
+            string request = 1; // The request being asked for
+            DiscreteThreshold detection_threshold = 2; // The requested sensitivity of sensor during the task
+            DiscreteThreshold detection_report_rate = 3; // The requested reporting rate of sensor during the task
+            DiscreteThreshold classification_threshold = 4; // The requested classification sensitivity of sensor during the task
+            string mode_change = 5; // Mode change for the ASM
+            LocationOrRangeBearing look_at = 6; // LookAt command for tasking pointing ASMs
+        }
+        optional string command_parameter = 8; // Parameter string for some commands
+    }
+
+    enum DiscreteThreshold {
+        DISCRETE_THRESHOLD_UNSPECIFIED = 0; // Threshold not set
+        DISCRETE_THRESHOLD_LOW = 1; // Threshold set to low
+        DISCRETE_THRESHOLD_MEDIUM = 2; // Threshold set to medium
+        DISCRETE_THRESHOLD_HIGH = 3; // Threshold set to high
+    }
+
+    message Region {
+        RegionType type = 1; // Type of region
+        string region_id = 2; // Unique ID of region
+        string region_name = 3; // Name of region
+        LocationOrRangeBearing region_area = 4; // Area that defines the region
+        repeated ClassFilter class_filter = 5; // Filter for classifications detected in the region
+        repeated BehaviourFilter behaviour_filter = 6; // Filter for behaviours detected in the region
+    }
+
+    enum RegionType {
+        REGION_TYPE_UNSPECIFIED = 0;
+        REGION_TYPE_AREA_OF_INTEREST = 1;
+        REGION_TYPE_IGNORE = 2;
+        REGION_TYPE_BOUNDARY = 3;
+    }
+
+    message LocationOrRangeBearing {
+        oneof fov_oneof {
+            RangeBearingCone range_bearing = 1; // Location in Spherical coordinates
+            LocationList location_list = 2; // Location in Geo coordinates
+        }
+    }
+
+    message ClassFilter {
+        Parameter parameter = 1; // Parameter to filter on
+        string type = 2; // Type of classification to filter on
+        repeated SubClassFilter sub_class_filter = 3; // Sub-classes to filter on
+        optional DiscreteThreshold priority = 4; // Priority of filter
+    }
+
+    message SubClassFilter {
+        Parameter parameter = 1; // Parameter to filter on
+        string type = 2; // Type of classification to filter on
+        repeated SubClassFilter sub_class_filter = 3; // Sub-classes to filter on
+        DiscreteThreshold priority = 4; // Priority of filter
+    }
+
+    message BehaviourFilter {
+        Parameter parameter = 1; // Parameter to filter on
+        optional string type = 2; // Type of behaviour to filter on
+        optional DiscreteThreshold priority = 3; // Priority of filter
+    }
+
+    message Parameter {
+        string name = 1; // Name of the parameter to filter
+        Operator operator = 2; // Operator to be filtered on
+        float value = 3; // Threshold
+    }
+
+    enum Operator {
+        OPERATOR_UNSPECIFIED = 0;
+        OPERATOR_ALL = 1;
+        OPERATOR_GREATER_THAN = 2;
+        OPERATOR_LESS_THAN = 3;
+        OPERATOR_EQUALS = 4;
+    }
+}
+// [END messages]

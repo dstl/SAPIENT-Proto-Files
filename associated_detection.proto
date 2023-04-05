@@ -1,0 +1,29 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+
+import "google/protobuf/timestamp.proto";
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg";
+option java_outer_classname = "AssociatedDetectionProto";
+// [END java_declaration]
+
+// [START messages]
+message AssociatedDetection {
+    optional google.protobuf.Timestamp timestamp = 1; // UTC timestamp the message was sent
+    string node_id = 2; // ULID for the node where the assoicated detection has originiated
+    string object_id = 3; // ULID for the object detected in the environment
+    optional AssociationRelation association_type = 4; // Relationship of associated detection to this message
+}
+
+enum AssociationRelation {
+    ASSOCIATION_RELATION_UNSPECIFIED = 0; // Unset enum
+    ASSOCIATION_RELATION_NO_RELATION = 1;
+    ASSOCIATION_RELATION_PARENT = 2;
+    ASSOCIATION_RELATION_CHILD = 3;
+    ASSOCIATION_RELATION_SIBLING = 4;
+}
+// [END messages]

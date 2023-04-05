@@ -1,0 +1,18 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg";
+option java_outer_classname = "AssociatedFileProto";
+// [END java_declaration]
+
+// [START messages]
+message AssociatedFile {
+    string type = 1; // Type of file contained available at the URL
+    string url = 2; // The network address of where the file can be accessed
+}
+// [END messages]

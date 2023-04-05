@@ -1,0 +1,18 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg";
+option java_outer_classname = "ErrorProto";
+// [END java_declaration]
+
+
+// [START messages]
+message Error {
+    bytes packet = 1;  // Packet which caused the error
+    string error_message = 2; // Description of the error being reported
+}
+// [END messages]

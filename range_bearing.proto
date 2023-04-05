@@ -1,0 +1,56 @@
+// [START declaration]
+syntax = "proto3";
+package sapient_msg;
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg";
+option java_outer_classname = "RangeBearingProto";
+// [END java_declaration]
+
+// [START messages]        
+message RangeBearing {
+    optional double elevation = 1; // Elevation in relation to node's horizon
+    optional double azimuth = 2; // Azimuth in relation to the node's north
+    optional double range = 3; // Range from the node's location
+    optional double elevation_error = 4; // Elevation error
+    optional double azimuth_error = 5; // Azimuth error
+    optional double range_error = 6; // Range Error
+    RangeBearingCoordinateSystem coordinate_system = 7; // Units used by the range bearing
+    RangeBearingDatum datum = 8; // Datum or 'north' used by the range bearing
+}
+
+message RangeBearingCone {
+    optional double elevation = 1; // Elevation in relation to node's horizon
+    optional double azimuth = 2; // Azimuth in relation to the node's north
+    optional double range = 3; // Range from the node's location
+    optional double horizontal_extent = 4; // Horizontal extent angle in degrees
+    optional double vertical_extent = 5; // Vertical extent angle in degrees
+    optional double horizontal_extent_error = 6; // Error in the horizontal extent
+    optional double vertical_extent_error = 7; // Error in the vertical extent
+    optional double elevation_error = 8; // Elevation error
+    optional double azimuth_error = 9; // Azimuth error
+    optional double range_error = 10; // Range Error
+    RangeBearingCoordinateSystem coordinate_system = 11; // Units used by the range bearing
+    RangeBearingDatum datum = 12; // Datum or 'north' used by the range bearing
+}
+
+enum RangeBearingCoordinateSystem {
+    RANGE_BEARING_COORDINATE_SYSTEM_UNSPECIFIED = 0; // Co-ordinate system/units not defined
+    RANGE_BEARING_COORDINATE_SYSTEM_DEGREES_M = 1; // Values in decimal-degrees and meters
+    RANGE_BEARING_COORDINATE_SYSTEM_RADIANS_M = 2; // Values in radians and meters
+    RANGE_BEARING_COORDINATE_SYSTEM_DEGREES_KM = 3; // Values in decimal-degrees and kilometers
+    RANGE_BEARING_COORDINATE_SYSTEM_RADIANS_KM = 4; // Values in radians and kilometers
+    RANGE_BEARING_COORDINATE_SYSTEM_DEGREES_F = 5; // Values in decimal-degrees and feet
+    RANGE_BEARING_COORDINATE_SYSTEM_RADIANS_F = 6; // Values in radians and feet
+}
+
+enum RangeBearingDatum {
+    RANGE_BEARING_DATUM_UNSPECIFIED = 0; // Datum not defined
+    RANGE_BEARING_DATUM_TRUE = 1; // True North
+    RANGE_BEARING_DATUM_MAGNETIC = 2; // Magnetic North
+    RANGE_BEARING_DATUM_GRID = 3; // Grid North
+    RANGE_BEARING_DATUM_PLATFORM = 4; // 'North' is the heading of the platform carrying the node
+}
+// [END messages]
