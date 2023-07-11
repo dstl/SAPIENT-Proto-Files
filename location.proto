@@ -21,16 +21,18 @@ message Location {
     optional double x_error = 4; // X-coordinate error
     optional double y_error = 5; // Y-coordinate error
     optional double z_error = 6; // Z-coordinate error
-    LocationCoordinateSystem coordinate_system = 7; // Coordinate system used
-    LocationDatum datum = 8; // Datum used
+    optional string utm_zone = 7; // For reporting locations in an adjacent UTM zone
+    LocationCoordinateSystem coordinate_system = 8; // Coordinate system used
+    LocationDatum datum = 9; // Datum used
 }
 
 enum LocationCoordinateSystem {
+    reserved 3, 4; // These values were used in SAPIENT upto version 7, but are no longer used due to use of non-SI units
     LOCATION_COORDINATE_SYSTEM_UNSPECIFIED = 0; // Co-ordinate system/units not defined
     LOCATION_COORDINATE_SYSTEM_LAT_LNG_DEG_M = 1; // Latitude/Longitude in decimal-degrees/metres
     LOCATION_COORDINATE_SYSTEM_LAT_LNG_RAD_M = 2; // Latitude/Longitude in radians/metres
-    LOCATION_COORDINATE_SYSTEM_LAT_LNG_DEG_F = 3; // Latitude/Longitude in decimal-degrees/feet
-    LOCATION_COORDINATE_SYSTEM_LAT_LNG_RAD_F = 4; // Latitude/Longitude in radians/feet
+//    LOCATION_COORDINATE_SYSTEM_LAT_LNG_DEG_F = 3; // Latitude/Longitude in decimal-degrees/feet - DEPRECATED
+//    LOCATION_COORDINATE_SYSTEM_LAT_LNG_RAD_F = 4; // Latitude/Longitude in radians/feet - DEPRECATED
     LOCATION_COORDINATE_SYSTEM_UTM_M = 5; // UTM with altitude in metres
 }
 

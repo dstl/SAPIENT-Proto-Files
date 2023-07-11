@@ -37,13 +37,14 @@ message RangeBearingCone {
 }
 
 enum RangeBearingCoordinateSystem {
-    RANGE_BEARING_COORDINATE_SYSTEM_UNSPECIFIED = 0; // Co-ordinate system/units not defined
-    RANGE_BEARING_COORDINATE_SYSTEM_DEGREES_M = 1; // Values in decimal-degrees and meters
-    RANGE_BEARING_COORDINATE_SYSTEM_RADIANS_M = 2; // Values in radians and meters
-    RANGE_BEARING_COORDINATE_SYSTEM_DEGREES_KM = 3; // Values in decimal-degrees and kilometers
-    RANGE_BEARING_COORDINATE_SYSTEM_RADIANS_KM = 4; // Values in radians and kilometers
-    RANGE_BEARING_COORDINATE_SYSTEM_DEGREES_F = 5; // Values in decimal-degrees and feet
-    RANGE_BEARING_COORDINATE_SYSTEM_RADIANS_F = 6; // Values in radians and feet
+    reserved 5, 6; // These values were used in SAPIENT upto version 7, but are no longer used due to use of non-SI units
+      RANGE_BEARING_COORDINATE_SYSTEM_UNSPECIFIED = 0; // Co-ordinate system/units not defined
+      RANGE_BEARING_COORDINATE_SYSTEM_DEGREES_M = 1; // Values in decimal-degrees and meters
+      RANGE_BEARING_COORDINATE_SYSTEM_RADIANS_M = 2; // Values in radians and meters
+      RANGE_BEARING_COORDINATE_SYSTEM_DEGREES_KM = 3; // Values in decimal-degrees and kilometers 
+      RANGE_BEARING_COORDINATE_SYSTEM_RADIANS_KM = 4; // Values in radians and kilometers
+//    RANGE_BEARING_COORDINATE_SYSTEM_DEGREES_F = 5; // Values in decimal-degrees and feet - DEPRECATED
+//    RANGE_BEARING_COORDINATE_SYSTEM_RADIANS_F = 6; // Values in radians and feet - DEPRECATED
 }
 
 enum RangeBearingDatum {

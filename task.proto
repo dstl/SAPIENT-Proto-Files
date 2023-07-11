@@ -35,6 +35,7 @@ message Task {
     }
 
     message Command {
+        reserved 7; // This was a proposed 'custom' command that was never ratified
         oneof command {
             string request = 1; // The request being asked for
             DiscreteThreshold detection_threshold = 2; // The requested sensitivity of sensor during the task

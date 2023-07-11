@@ -25,7 +25,7 @@ message Registration {
 
     message NodeDefinition {
         NodeType node_type = 1; // Description of major type of the node
-		repeated string node_sub_type  = 2; // further description of node type
+	repeated string node_sub_type  = 2; // further description of node type
     }
 
     enum NodeType {
@@ -45,6 +45,8 @@ message Registration {
         NODE_TYPE_KINETIC = 13; // A system which has a physical effector (such as a missile or collision-based system)
         NODE_TYPE_JAMMER = 14; // A radio-frequency transmitter that disrupts other systems using power
         NODE_TYPE_CYBER = 15; // A system which uses network/communication protocols to detect or effect other systems
+        NODE_TYPE_LDEW = 16; // A Laser Directed Energy Weapon
+        NODE_TYPE_RFDEW = 17; // A Radio Frequency Directed Energy Weapon
     }
 
     message Capability {
@@ -64,6 +66,7 @@ message Registration {
     }
 
     enum TimeUnits {
+        reserved 7; // These values were used in SAPIENT upto version 7, but are no longer used due to use of non-SI units
         TIME_UNITS_UNSPECIFIED = 0; // Time units not specified
         TIME_UNITS_NANOSECONDS = 1; // Nano Seconds
         TIME_UNITS_MICROSECONDS = 2; // Micro Seconds
@@ -71,12 +74,12 @@ message Registration {
         TIME_UNITS_SECONDS = 4; // Seconds
         TIME_UNITS_MINUTES = 5; // Minutes
         TIME_UNITS_HOURS = 6; // Hours
-        TIME_UNITS_DAYS = 7; // Days
+//        TIME_UNITS_DAYS = 7; // Days
     }
 
     message Duration {
         TimeUnits units = 1; // Units that the duration are specified in
-        int32 value = 2; // Amount of time being specified for the duration
+        float value = 2; // Amount of time being specified for the duration
     }
 
     message ModeParameter {
@@ -96,18 +99,15 @@ message Registration {
         optional string zone = 5; // If using UTM coordinates, provide the UTM zone in this field (e.g. 30N)
     }
 
-	// Specify how velocity is provided by specifying the coordinates system type and units in use
+// Specify how velocity is provided by specifying the coordinates system type and units in use
     message VelocityType {
         oneof velocity_units_oneof {
-            GHCVelocityUnits ghc_velocity_units = 1; // Provide velocity in global coordinates in the style of Air Traffic Management and specify units
-            
-			RYPVelocityUnits ryp_units = 2; // Provide velocity relative to sensor location and sensor pointing direction and specify units
-
-			RAEVelocityUnits rae_units = 3; // Provide velocity relative to sensor location and ground plane
-			
-			ENUVelocityUnits enu_velocity_units = 4; // Provide velocity as a vector in global spherical coordinates and specify units	
-			
-			SHPVelocityUnits shp_velocity_units = 5; // Provide velocity as a vector in global spherical coordinates 
+                reserved 1, 2, 3, 5; // These values were used in SAPIENT upto version 7, but not in the current version
+//            	GHCVelocityUnits ghc_velocity_units = 1; // Provide velocity in global coordinates in the style of Air Traffic Management and specify units - DEPRECIATED
+//		RYPVelocityUnits ryp_units = 2; // Provide velocity relative to sensor location and sensor pointing direction and specify units - DEPRECIATED
+//		RAEVelocityUnits rae_units = 3; // Provide velocity relative to sensor location and ground plane - DEPRECIATED
+		ENUVelocityUnits enu_velocity_units = 4; // Provide velocity as a vector in global spherical coordinates and specify units	
+//		SHPVelocityUnits shp_velocity_units = 5; // Provide velocity as a vector in global spherical coordinates - DEPRECIATED
 
         };
         oneof datum_oneof {
@@ -239,7 +239,6 @@ message Registration {
         optional int32 concurrent_tasks = 1; // The number of instances of this task that can be run at the same time
         RegionDefinition region_definition = 2; // Region definition for regions this task can operate on
         repeated Command command = 3; // Commands that can be issued as part of this task
-        string type = 4; // Type of task
     }
 
     message ClassFilterDefinition {
@@ -265,7 +264,7 @@ message Registration {
         OPERATOR_ALL = 1;
         OPERATOR_GREATER_THAN = 2;
         OPERATOR_LESS_THAN = 3;
-        OPERATOR_EQUALS = 4;
+        OPERATOR_EQUAL = 4;
     }
 
     message BehaviourFilterDefinition {

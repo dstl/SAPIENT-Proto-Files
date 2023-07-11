@@ -13,7 +13,7 @@ option java_outer_classname = "AlertAckProto";
 // [START messages]
 message AlertAck {
     string alert_id = 1; // ULID for the message
-    optional AlertStatus alert_status = 2; // State of the information in this message
+    AlertStatus alert_status = 2; // State of the information in this message
     optional string reason = 3; // Reason why alert was not accepted
   
     enum AlertStatus {

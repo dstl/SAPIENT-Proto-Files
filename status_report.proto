@@ -21,18 +21,19 @@ message StatusReport {
     optional string active_task_id = 4; // ULID of the task the ASM is currently performing
     optional string mode = 5; // The current mode of the ASM
     optional Power power = 6; // The power supply of the ASM
-    optional Location sensor_location = 7; // Current ASM location
+    optional Location node_location = 7; // Current ASM location
     optional LocationOrRangeBearing field_of_view = 8; // Area currently visible to ASM
     optional LocationOrRangeBearing coverage = 9; // Area that the ASM can cover
     repeated LocationOrRangeBearing obscuration = 10; // Area that the ASM cannot cover
     repeated Status status = 11; // Information about the ASM or the envionrment
   
     enum System {
+        reserved 4; // This value was used up to v7 SAPIENT, but was withdrawn after as it was not considered well-defined
         SYSTEM_UNSPECIFIED = 0; // The system state is unset
         SYSTEM_OK = 1; // The system is operating normally
         SYSTEM_WARNING = 2; // There is a potential issue with the system
         SYSTEM_ERROR = 3; // There is an issue with the system
-        SYSTEM_TAMPER = 4; // The system has been tampered with
+//        SYSTEM_TAMPER = 4; // The system has been tampered with - DEPRECIATED
         SYSTEM_GOODBYE = 5; // The system is about to disconnect
     }
 

@@ -20,6 +20,7 @@ option java_outer_classname = "DetectionReportProto";
 
 // [START messages]
 message DetectionReport {
+    reserved 17, 18, 20, 21; // These values were used in SAPIENT v7, but are not used in the current version
     string report_id = 1; // ULID for the message
     string object_id = 2; // ULID for the object detected in the environment
     optional string task_id = 3; // ULID of the task the ASM is currently performing
@@ -39,11 +40,11 @@ message DetectionReport {
     repeated AssociatedDetection associated_detection = 15; // Other SAPIENT detections associated with this detection
     repeated DerivedDetection derived_detection = 16; // Other SAPIENT detections dervied from this detection
     oneof velocity_oneof {
-        RYPVelocity ryp_velocity = 17; // Velocity of object relative to sensor location and sensor pointing direction  
-        GHCVelocity ghc_velocity = 18; // Velocity of object in global coordinates in the style of Air Traffic Management
+//        RYPVelocity ryp_velocity = 17; // Velocity of object relative to sensor location and sensor pointing direction  
+//        GHCVelocity ghc_velocity = 18; // Velocity of object in global coordinates in the style of Air Traffic Management
 		ENUVelocity enu_velocity = 19; // Velocity of object as a vector in global cartesian coordinates
-		SHPVelocity shp_velocity = 20; // Velocity of object as a vector in global spherical coordinates 
-		RAEVelocity rae_velocity = 21; // Velocity of object relative to sensor location and ground plane 
+//		SHPVelocity shp_velocity = 20; // Velocity of object as a vector in global spherical coordinates 
+//		RAEVelocity rae_velocity = 21; // Velocity of object relative to sensor location and ground plane 
     }
     optional string colour = 22; // Colour of the object being reported
     optional string id = 23; // ID of the object being reported (e.g. the tail number of aircraft)
@@ -90,7 +91,7 @@ message DetectionReport {
 
     message DerivedDetection {
         optional google.protobuf.Timestamp timestamp = 1; // UTC timestamp the message was sent
-        string node_id = 2; // ULID for the node where the assoicated detection has originiated
+        string node_id = 2; // UUID for the node where the assoicated detection has originiated
         string object_id = 3; // ULID for the object detected in the environment
     }
 }
