@@ -101,14 +101,13 @@ message Registration {
 
 // Specify how velocity is provided by specifying the coordinates system type and units in use
     message VelocityType {
+        reserved 1, 2, 3, 5; // These values were used in SAPIENT upto version 7, but not in the current version
         oneof velocity_units_oneof {
-                reserved 1, 2, 3, 5; // These values were used in SAPIENT upto version 7, but not in the current version
-//            	GHCVelocityUnits ghc_velocity_units = 1; // Provide velocity in global coordinates in the style of Air Traffic Management and specify units - DEPRECIATED
-//		RYPVelocityUnits ryp_units = 2; // Provide velocity relative to sensor location and sensor pointing direction and specify units - DEPRECIATED
-//		RAEVelocityUnits rae_units = 3; // Provide velocity relative to sensor location and ground plane - DEPRECIATED
-		ENUVelocityUnits enu_velocity_units = 4; // Provide velocity as a vector in global spherical coordinates and specify units	
-//		SHPVelocityUnits shp_velocity_units = 5; // Provide velocity as a vector in global spherical coordinates - DEPRECIATED
-
+            // GHCVelocityUnits ghc_velocity_units = 1; // Provide velocity in global coordinates in the style of Air Traffic Management and specify units - DEPRECIATED
+            // RYPVelocityUnits ryp_units = 2; // Provide velocity relative to sensor location and sensor pointing direction and specify units - DEPRECIATED
+            // RAEVelocityUnits rae_units = 3; // Provide velocity relative to sensor location and ground plane - DEPRECIATED
+            ENUVelocityUnits enu_velocity_units = 4; // Provide velocity as a vector in global spherical coordinates and specify units
+            // SHPVelocityUnits shp_velocity_units = 5; // Provide velocity as a vector in global spherical coordinates - DEPRECIATED
         };
         oneof datum_oneof {
             LocationDatum location_datum = 6; // Datum of velocity in Cartesian coordinates
@@ -207,7 +206,7 @@ message Registration {
 
     message DetectionClassDefinition {
         optional ConfidenceDefinition confidence_definition = 1; // A flag to note what type of confidences the ASM will provide for classifications
-        repeated PerformanceValue class_performance = 2; // Performance values associated with the classifications in the detection 
+        repeated PerformanceValue class_performance = 2; // Performance values associated with the classifications in the detection
         repeated ClassDefinition class_definition = 3; // Classifications the ASM is able to provide
     }
 
