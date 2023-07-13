@@ -78,7 +78,9 @@ message Registration {
     }
 
     message Duration {
+        reserved 2; // The type of the 'value' field was changed from int32 to float with the introduction of BSI Flex 335
         TimeUnits units = 1; // Units that the duration are specified in
+//        int32 value = 2; // Amount of time being specified for the duration
         float value = 2; // Amount of time being specified for the duration
     }
 
