@@ -21,9 +21,9 @@ message Location {
     optional double x_error = 4; // X-coordinate error
     optional double y_error = 5; // Y-coordinate error
     optional double z_error = 6; // Z-coordinate error
-    optional string utm_zone = 7; // For reporting locations in an adjacent UTM zone
-    LocationCoordinateSystem coordinate_system = 8; // Coordinate system used
-    LocationDatum datum = 9; // Datum used
+    LocationCoordinateSystem coordinate_system = 7; // Coordinate system used
+    LocationDatum datum = 8; // Datum used
+    optional string utm_zone = 9; // For reporting locations in an adjacent UTM zone
 }
 
 enum LocationCoordinateSystem {
