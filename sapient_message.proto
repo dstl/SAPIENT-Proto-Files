@@ -25,7 +25,7 @@ option java_outer_classname = "SapientMessageProto";
 
 // [START options]
 option (file_options) = {
-  standard_version: "ICD7.0"
+  standard_version: "BSI_Flex_335_v1.0"
 };
 // [END options]
 
