@@ -1,0 +1,24 @@
+// Dstl (c) Crown Copyright 2023
+//
+// [START declaration]
+syntax = "proto3";
+package sapient_msg.bsi_flex_335_v1_0;
+// [END declaration]
+
+// [START java_declaration]
+option java_multiple_files = true;
+option java_package = "uk.gov.dstl.sapientmsg.bsiflex335v1";
+option java_outer_classname = "RegistrationAckProto";
+// [END java_declaration]
+
+// [START go_declaration]
+option go_package = "github.com/dstl/SAPIENT-Proto-Files/sapient_msg/bsi_flex_335_v1_0;bsiflex335v1";
+// [END go_declaration]
+
+
+// [START messages]
+message RegistrationAck {
+	bool acceptance = 1; // This value shall be 0 if the registration is rejected, or 1 if the registration is accepted
+	optional string ack_response_reason = 2; // This field can be used to communicate the reason for non-registration
+}
+// [END messages]
